@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shuanghui.jiaxiangwei.mapper.JxwServerLogMapper">
+    <resultMap id="resultMap" type="com.shuanghui.jiaxiangwei.dto.JxwServerLogDto">
+        <result column="id" property="id" jdbcType="NUMERIC"></result>
+        <result column="class_path" property="classPath" jdbcType="VARCHAR"></result>
+        <result column="method_name" property="methodName" jdbcType="VARCHAR"></result>
+        <result column="params" property="params" jdbcType="VARCHAR"></result>
+        <result column="result" property="result" jdbcType="VARCHAR"></result>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"></result>
+        <result column="creation_date" property="creationDate" jdbcType="DATE"></result>
+        <result column="last_update_by" property="lastUpdateBy" jdbcType="VARCHAR"></result>
+        <result column="last_date" property="lastDate" jdbcType="DATE"></result>
+        <result column="version" property="version" jdbcType="NUMERIC"></result>
+    </resultMap>
+    <select id="findAll" resultMap="resultMap">
+        SELECT
+        id,class_path,method_name,params,result,create_by,creation_date,last_update_by,last_date,version
+        FROM  jxw_server_log
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.shuanghui.jiaxiangwei.dto.JxwServerLogDto">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+             SELECT  last_insert_id()
+        </selectKey>
+       insert into jxw_server_log
+        (class_path,method_name,params,result,create_by,creation_date,last_update_by,last_date,version)
+       values
+        (#{classPath},#{methodName},#{params},#{result},#{createBy},#{creationDate},#{lastUpdateBy},#{lastDate},0)
+    </insert>
+
+
+
+
+
+
+</mapper>
+
+
