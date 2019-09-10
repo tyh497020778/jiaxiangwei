@@ -4,15 +4,12 @@ import com.shuanghui.jiaxiangwei.aspect.ServerLog;
 import com.shuanghui.jiaxiangwei.dto.EmployeeDto;
 import com.shuanghui.jiaxiangwei.service.IEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/employeeController")
+@RequestMapping(value = "/service")
 public class EmployeeController {
    @Autowired
    private IEmployeeService employeeService;
@@ -21,9 +18,9 @@ public class EmployeeController {
      * 查询全部
      * @return
      */
-   @GetMapping("findAll")
-   @ResponseBody
-   public List<EmployeeDto> findAll(){
+   @RequestMapping(value ="findAll",method=RequestMethod.PUT)
+//   @ResponseBody
+   public List<EmployeeDto> findAll(@RequestParam("name") String name){
        return employeeService.findAll();
    }
 }
