@@ -12,8 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
         org.activiti.spring.boot.SecurityAutoConfiguration.class
 })
-public class Startup001Application {
+public class StartupApplication {
     public static  void  main(String[] args){
-        SpringApplication.run(Startup001Application.class,args);
+        SpringApplication.run(StartupApplication.class,args);
     }
 }
