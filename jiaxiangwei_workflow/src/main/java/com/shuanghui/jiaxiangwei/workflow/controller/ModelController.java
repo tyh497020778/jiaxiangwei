@@ -148,8 +148,12 @@ public class ModelController {
         String id = request.getParameter("id");
         BufferedOutputStream bos = null;
         try {
-                Model modelData = repositoryService.getModel(id);
-                byte[] bpmnBytes = repositoryService.getModelEditorSource(modelData.getId());
+            //获取模型
+            Model modelData = repositoryService.getModel(id);
+            byte[] bytes = repositoryService.getModelEditorSource(modelData.getId());
+            JsonNode modelNode = new ObjectMapper().readTree(bytes);
+            BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+            byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
                 // 封装输出流
                 bos = new BufferedOutputStream(response.getOutputStream());
                 bos.write(bpmnBytes);// 写入流
