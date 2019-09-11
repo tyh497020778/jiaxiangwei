@@ -24,10 +24,9 @@ spring:
       min-idle: 0
       #连接超时时间（毫秒）
     timeout: 1000
-  #关闭工作流异步任务的定时执行
-  activiti:
-    async-executor-enabled: false
-    job-executor-activate: false
+   #静态资源直接访问
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/
 mybatis:
   mapper-locations: classpath:com/shuanghui/jiaxiangwei/mapper/*.xml
   type-aliases-package: com.shuanghui.jiaxiangwei.dto

@@ -23,6 +23,7 @@ public class ActivitiConfigurer implements ProcessEngineConfigurationConfigurer 
         parsers.add(proxyUserTaskBpmnParseHandle);
         processEngineConfiguration.setPostBpmnParseHandlers(parsers);
         processEngineConfiguration.setJobExecutorActivate(false);
+        processEngineConfiguration.setAsyncExecutorEnabled(false);
         processEngineConfiguration.setActivityFontName("宋体");
         processEngineConfiguration.setLabelFontName("宋体");
         processEngineConfiguration.setAnnotationFontName("宋体");
