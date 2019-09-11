@@ -18,9 +18,9 @@ public class EmployeeController {
      * 查询全部
      * @return
      */
-   @RequestMapping(value ="findAll",method=RequestMethod.PUT)
+   @RequestMapping(value ="findAll")
 //   @ResponseBody
-   public List<EmployeeDto> findAll(@RequestParam("name") String name){
+   public List<EmployeeDto> findAll(){
        return employeeService.findAll();
    }
 }
