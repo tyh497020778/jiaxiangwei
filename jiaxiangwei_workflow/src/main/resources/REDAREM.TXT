@@ -1,0 +1,25 @@
+框架:
+spring boot+spring cloud+redis+shiro+log4j
+
+前台
+web端
+
+mobile端
+
+
+后台CRM管理
+
+
+
+jiaxiangwei_front
+jiaxiangwei_back
+
+jiaxiangwei_common//dao、工具类、常量类
+jiaxaingwei_server//微服务 如订单、用户、商品、评价
+
+
+
+Git信息
+https://github.com/tyh497020778/project
+tyh497020778@163.com
+tyh683010
