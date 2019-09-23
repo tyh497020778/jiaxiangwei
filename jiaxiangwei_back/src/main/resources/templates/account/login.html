@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>登录</title>
+    <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+    <style type="text/css">
+        body{
+            font-family: "微软雅黑";
+            font-size: 13px;
+            margin: 0;
+            padding: 0 ;
+        }
+        img {
+
+            vertical-align: middle;
+        }
+
+        .login {
+            background:#fefefe url('/images/bg_20150818001.jpg') no-repeat center top;
+        }
+        .login .logo {
+            margin: 60px auto 0;
+            padding: 15px;
+            text-align: center;
+            width: 247px;
+        }
+        .login .content {
+            width:618px;height:401px;position:absolute;left:50%;top:84px;margin:0 0 0 -309px;
+            background:url('/images/bg_20150818002.png') no-repeat;
+        }
+        .login .formtitle{
+            font-size: 24px;
+            font-weight: 300;
+            line-height: 40px;
+            margin-bottom: 25px;
+            margin-top: 0;text-align:center;
+        }
+
+        .lname,.lpassword,.pwinput1{
+            width: 240px;height:50px;line-height:50px;color:#333;position:absolute;left:185px;font-size:14px;outline:none;border:none;background:none;
+        }
+        .lname{top:97px;}
+        .lpassword{top:167px;}
+        .pwinput1{top:237px;width:140px;}
+        #verifyImg{height:53px;width:140px;position:absolute;left:332px;top:238px;}
+
+        .lbtn{
+            width:109px;height:40px;cursor:pointer;position:absolute;left:182px;top:307px;border:none;background:url('/images/bg_20150818003.png') no-repeat 0 0;
+        }
+        .lbtn:hover{
+            background-position:0 -40px;
+        }
+        .forget{
+            position: absolute;
+            left: 304px;
+            top: 318px;
+            color: #f00;
+            text-shadow: 0 0 2px #fff;
+        }
+        .forget h4{
+            color: #555;
+            font-weight: 300;
+            font-size: 18px;
+            line-height: 20px;
+        }
+        .pimgYzm{margin:0;padding:0;}
+        .pimgYzm *{vertical-align:middle;}
+        #verifyImg{margin-left:10px;}
+
+
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color: #666;
+        }
+
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color: #666;
+        }
+
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder {
+            color: #666;
+        }
+
+        input::-webkit-input-placeholder,
+        textarea::-webkit-input-placeholder {
+            color: #666;
+        }
+    </style>
+    <script type="application/javascript">
+        $(function(){
+            $("#verifyImg").click(function(){
+                $(this).attr("src","/captcha/captchaCode?code="+new Date());
+            });
+        });
+    </script>
+</head>
+<body class="login">
+<div class="content">
+    <form action="/shuanghui|||jiaxiangwei" method="post">
+        <input class="lname" type="text" name="username" placeholder="用户名" />
+        <input class="lpassword" type="password" name="password" placeholder="密码" />
+        <p class="pimgYzm"><input type="text" class="pwinput1" name="verify"  placeholder="验证码" /><img id="verifyImg" height="30" alt="" src="/captcha/captchaCode"  /></p>
+        <div style="text-align:center;margin-bottom:5px;margin-top:10px;"><button class="lbtn" type="submit">&nbsp;</button></div>
+        <div class="forget">
+
+        <div class="alert alert-error input-medium controls" th:text="${loginError}">
+        </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
