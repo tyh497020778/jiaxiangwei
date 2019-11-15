@@ -53,9 +53,6 @@ public class LoginController {
             if(StringUtils.isEmpty(user.getIsActive()) || user.getIsActive().equalsIgnoreCase("0")){
                 model.addAttribute(FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, "账号未激活!");
             }else {
-//                Integer roleId = roleUserService.getRoleIdById(user.id.intValue());
-////                //权限
-////                session.setAttribute("roleId", roleId);
                 //右上角登录名
                 session.setAttribute("currentUser", user.userName);
                 session.setAttribute("currentUserId", user.id);
@@ -75,7 +72,9 @@ public class LoginController {
      * @return
      */
     @RequestMapping("/index")
-    public String index(){
+    public String index(Model model){
+        ShiroRealm.ShiroUser user =  memberService.getCurrentUser();
+        model.addAttribute("userId",user.id);
         return "index";
     }
 }

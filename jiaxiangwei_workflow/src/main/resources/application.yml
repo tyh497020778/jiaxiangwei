@@ -24,6 +24,9 @@ spring:
       min-idle: 0
       #连接超时时间（毫秒）
     timeout: 1000
+  activiti:
+    job-executor-activate: false
+    async-executor-enabled: false
 mybatis:
   mapper-locations: classpath:com/shuanghui/jiaxiangwei/mapper/*.xml
   type-aliases-package: com.shuanghui.jiaxiangwei.dto

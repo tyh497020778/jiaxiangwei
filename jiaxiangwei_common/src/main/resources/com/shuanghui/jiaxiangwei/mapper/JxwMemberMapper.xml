@@ -18,7 +18,7 @@
         <result column="last_date" property="lastDate" jdbcType="DATE"></result>
         <result column="version" property="version" jdbcType="NUMERIC"></result>
     </resultMap>
-    <select id="findUserByUserName" resultMap="resultMap" parameterType="java.lang.String">
+    <sql id="query_sql_base">
         SELECT
             user_id,
             user_name,
@@ -36,8 +36,17 @@
             last_date,
             version
         FROM  jxw_member_t
+    </sql>
+    <select id="findUserByUserName" resultMap="resultMap" parameterType="java.lang.String">
+        <include refid="query_sql_base"/>
         where user_name=#{userName}
     </select>
+
+    <select id="findUserByUserId" resultMap="resultMap" parameterType="java.lang.Long">
+        <include refid="query_sql_base"/>
+        where user_id=#{userId}
+    </select>
+
 </mapper>
 
 

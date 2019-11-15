@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Title</title>
+    <link href="/styles/bg.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/bg.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
 </head>
 <body>
-index
+<input type="hidden" id="path" value="/" />
+<div class="head">
+    <!--引入了头部的一部分,登录账号,订单信息-->
+    <div class="hcontent" th:include="main/bghead">
+    </div>
+</div>
+<div class="container">
+    <!--左边菜单和jsp引入-->
+    <div th:include="main/bgleft"></div>
+    <div class="cright">
+
+        <p style="padding:20px;">欢迎登陆后台管理系统，开始愉快的工作吧~</p>
+    </div>
+    <div class="footer">
+    </div>
+    <!--后面的sql调试之类的删除了-->
+</div>
 </body>
 </html>

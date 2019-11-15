@@ -57,8 +57,8 @@ public class ServerLogAspect {
         Date date = new Date();
         serverLog.setCreationDate(date);
         serverLog.setLastDate(date);
-        serverLog.setCreateBy(-1);
-        serverLog.setLastUpdateBy(-1);
+        serverLog.setCreateBy(-1L);
+        serverLog.setLastUpdateBy(-1L);
         // 请求的 类名、方法名
         String className = joinPoint.getTarget().getClass().getName();
         String methodName = signature.getName();

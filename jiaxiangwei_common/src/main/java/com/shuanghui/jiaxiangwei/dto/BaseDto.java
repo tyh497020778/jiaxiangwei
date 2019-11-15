@@ -17,7 +17,7 @@ public class BaseDto  {
     /**
      * 创建人
      */
-    private Integer createBy;
+    private Long createBy;
     /**
      * 创建时间
      */
@@ -25,7 +25,7 @@ public class BaseDto  {
     /**
      * 修改人
      */
-    private Integer lastUpdateBy;
+    private Long lastUpdateBy;
     /**
      * 修改时间
      */

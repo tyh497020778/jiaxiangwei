@@ -10,5 +10,18 @@ public interface IMemberService {
      * @return
      */
     public ShiroRealm.ShiroUser getCurrentUser();
+
+    /**
+     * 按登录名获取用户
+     * @param userName
+     * @return
+     */
     public JxwMemberEntityDto findUserByUserName(String userName);
+
+    /**
+     * 按id获取用户
+     * @param id
+     * @return
+     */
+    public JxwMemberEntityDto findUserByUserId(Integer id);
 }

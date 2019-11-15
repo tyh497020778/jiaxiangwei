@@ -32,4 +32,9 @@ public class MemberServiceImpl  implements IMemberService {
     public JxwMemberEntityDto findUserByUserName(String username) {
         return memberMapper.findUserByUserName(username);
     }
+
+    @Override
+    public JxwMemberEntityDto findUserByUserId(Integer id) {
+      return memberMapper.findUserByUserId(id);
+    }
 }

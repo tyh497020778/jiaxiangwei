@@ -13,4 +13,11 @@ public interface JxwMemberMapper {
      * @return
      */
     JxwMemberEntityDto findUserByUserName(@Param("userName") String userName);
+
+    /**
+     * 按id获取用户
+     * @param userId
+     * @return
+     */
+    JxwMemberEntityDto findUserByUserId(@Param("userId")  Integer userId);
 }
