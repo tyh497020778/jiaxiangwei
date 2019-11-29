@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <TITLE>后台管理系统</TITLE>
+    <link href="/styles/bg.css" type="text/css" rel="stylesheet" />
+    <link href="/styles/zTreeStyle.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.ztree.all-3.5.min.js"></script>
+    <script type="text/javascript" src="/js/bg.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        function setTree(){
+            $.ajax({
+                async : false,			//这个是关闭多线程,因为post方法没有等待取回数据就执行了前台,所以总是不显示
+                cache : true,
+                type : 'POST',
+                dataType : "json",
+                url : "/goodsType/tree",
+                success : function(html) {
+                    treeNodes = html; //把后台封装好的简单Json格式赋给treeNodes
+                }
+            });
+            //设置
+            $.fn.zTree.init($("#tree"),setting,treeNodes);//id,设置,数据,$.fn.zTree包下
+        }
+
+        var treeNodes;
+        var setting = {							//设置
+            data : {
+                simpleData : {
+                    enable: true,				//允许设置数据编辑格式
+                    idKey: "id",				//treeNodes数据的主键列名是id
+                    pIdKey: "parentId",				//设置treeNodes的父id的列明为pId
+                    rootPId: 0				//默认的顶级id的值是0
+                }
+            },
+            check:{								//这个属性来控制是多选还是单选,单选貌似只能支持级联选中
+                enable: false,
+                chkStyle: "checkbox",			//多选
+                chkboxType: { "Y": "s", "N": "s" }	//y表示选中的结果,n表示取消的结果,后面如果跟p表示只影响自己,s表示影响子节点和自己
+            },
+            callback:{
+                //treeId,可以获取数据的内容,treeNode不知道是什么啊
+                beforeClick:function(event, treeId, treeNode){
+                    debugger
+                    //添加
+                    $("#parentName").html(treeId['name']);
+                    $("#parentId").val(treeId['id']);
+
+                    //编辑
+                    $("#name1").val(treeId['name']);
+                    $("#parentId1").val(treeId['parentId']);
+                    $("#id").val(treeId["id"])
+                    $("#whileOnIndex1").val(treeId["whileOnIndex"])
+                }
+            }
+        };
+        //初始化商品类型
+       function initGoodsType(){
+               $.ajax({
+                   async : false,			//这个是关闭多线程,因为post方法没有等待取回数据就执行了前台,所以总是不显示
+                   cache : true,
+                   type : 'POST',
+                   dataType : "json",
+                   url : "/goodsType/tree",
+                   success : function(data) {
+                       if(data!=undefined){
+                           //循环
+                           $("#parentId1").html("");
+                           $("#parentId1").append("<option value=''>请选择</option>");
+                           for(var a=0;a<data.length;a++){
+                               $("#parentId1").append("<option value="+data[a].id+">"+data[a].name+"</option>");
+                           }
+                       }
+                   }
+               });
+       }
+
+        $(document).ready(function() {
+            //点击保存按钮,添加子节点
+            $("#addbutton").click(function(){
+                 $("#operation").val("add");
+                 $("#form1").submit();
+            });
+
+            //删除
+            $("#deletebutton").click(function(){
+                $("#operation1").val("del");
+                $("#form2").submit();
+            });
+
+            //编辑
+            $("#updatebutton").click(function(){
+                $("#operation1").val("update");
+                $("#form2").submit();
+            });
+        });
+        $(document).ready(function(){
+            //获取数据并且设置树
+            setTree();
+            //初始化商品类型
+            initGoodsType();
+        });
+        /* ]]> */
+    </script>
+</head>
+<body>
+<div class="head">
+    <div class="hcontent" th:include="main/bghead">
+    </div>
+</div>
+
+<div class="container">
+    <div th:include="main/bgleft"></div>
+    <div class="cright">
+        <div class="ctable">
+            <p class="cttit">
+                当前位置：总分类管理 > 编辑模块
+            </p>
+            <div class="cbox">
+                <div class="newleft">
+                    <ul id="tree" class="ztree"></ul>
+                </div>
+
+                <div class="newright">
+                    <style>
+                         .newtable td{text-align:left;}
+                        .newright{overflow-x:hidden;overflow-y:scroll;}
+                    </style>
+                    <form id="form1" class="addGoodsTypeform" method="post" action="/goodsType/dealGoodsType" enctype="multipart/form-data">
+                     <input type="hidden" name="operation" id="operation"/>
+                     <table class="table newtable" border="0" cellspacing="0" cellpadding="0" >
+                        <tbody>
+                        <tr>
+                            <td colspan="4" class="tdtit" style="text-align:center;">增加模块</td>
+                        </tr>
+                        <tr>
+                            <td>父模块</td>
+                            <td>
+                                <input type="hidden" name="parentId" id="parentId" value="0" />
+                                <span name="parentName" id="parentName"></span>
+                             </td>
+                            <td width="10%">模块名</td>
+                            <td width="40%"><input type="text" name="name" id="name" /></td>
+                        </tr>
+                        <tr>
+                            <td width="10%">模块图片</td>
+                            <td width="40%"><input type="file" name="file" id="file" /></td>
+                            <td width="10%">大首页顺序</td>
+                            <td width="40%"><input type="text" name="whileOnIndex"  id="whileOnIndex" /></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="4" class="tdtit" style="text-align:center;">
+                                <button class="btnblue" type="button" id="addbutton">保存模块</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                     </table>
+                 </form>
+
+                <div style="margin-top:40px;"></div>
+                <form id="form2" class="addGoodsTypeform" method="post" action="/goodsType/dealGoodsType" enctype="multipart/form-data">
+                 <input type="hidden" name="operation" id="operation1"/>
+                 <input type="hidden" name="id" id="id"/>
+                 <table class="table newtable" border="0" cellspacing="0" cellpadding="0" >
+                    <tbody>
+                    <tr>
+                        <td colspan="4" class="tdtit" style="text-align:center;">编辑模块</td>
+                    </tr>
+                    <tr>
+                        <td>父模块</td>
+                        <td>
+                            <select id="parentId1" name="parentId">
+                            </select>
+                        </td>
+                        <td width="10%">模块名</td>
+                        <td width="40%"><input type="text" name="name"  id="name1" /></td>
+                    </tr>
+                    <tr>
+                        <td width="10%">模块图片</td>
+                        <td width="40%"><input type="file" name="file" id="file1" /></td>
+                        <td width="10%">大首页顺序</td>
+                        <td width="40%"><input type="text" name="whileOnIndex"  id="whileOnIndex1" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="tdtit" style="text-align:center;">
+                            <button class="btnblue" id="updatebutton" type="button">编辑模块</button>
+                            <button class="btnblue"  id="deletebutton" type="button">删除模块</button>
+                        </td>
+                    </tr>
+                   </tbody>
+                </table>
+              </form>
+             </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function() {
+        $(".newleftul > li").click(function(){
+            if($(this).next().css('display')=="none"){
+                $(this).next().slideDown();
+                $(this).find(".newico").css('background-position','-35px -228px');
+            }
+            else{
+                $(this).next().slideUp();
+                $(this).find(".newico").css('background-position','-51px -228px');
+            }
+        });
+    });
+</script>
+
+<style type="text/css">
+    .cbox{
+        overflow: hidden;
+    }
+    .newleft{
+        border: 1px solid #ddd;
+        float: left;
+        margin-right: 4%;
+        min-height: 470px;
+        padding: 2%;
+        width: 25%;
+    }
+    .newleft li{
+        cursor: pointer;
+    }
+    .newright{
+        float: right;
+        width: 65%;
+
+    }
+    .subul{
+        display: none;
+        margin-left: 40px;
+    }
+    .newico{
+        background-image: url("myXDF_bg.png");
+        background-position: -51px -228px;
+        display: inline-block;
+        height: 15px;
+        width: 16px;
+
+    }
+    .newtable td{
+        line-height: 30px;
+
+    }
+    .newtable input, .newtable select{
+        border: 1px solid #ccc;
+        height: 25px;
+        line-height: 25px;
+        width: 300px;
+    }
+    .newtable select{
+        height: 30px;
+        line-height: 30px;
+    }
+    .tdtit{
+
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .scrollTable{position:relative;}
+</style>
+</body>
+</html>

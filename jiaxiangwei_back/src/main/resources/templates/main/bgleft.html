@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<script type="application/javascript">
+        var showOrder=false;
+        $(function(){
+            var r=$('#r').val();
+            if(r==25){              //销售部
+                showOrder=true;
+                $('#r3').show();
+                $('#r9').show();
+            }else if(r==29){        //企划部
+                $('#r4').show();
+                $('#r7').show();
+                $('#r8').show();
+                $('#r10').show();
+            }else if(r==28){        //财务部
+                $('#r5').show();
+            }else if(r==27){        //运营部
+                $('#r1').show();
+                $('#r4').show();
+                $('#r7').show();
+                $('#r8').show();
+
+            }else if(r==20){
+
+                $('#r1,#r2,#r3,#r4,#r5,#r6,#r7,#r8,#r9,#r10,#r11').show();
+            }else if(r==26){//编辑部
+                $('#r2').show();
+            }
+            else if(r==30){//运营维护组
+                $('#r2').show();
+                $('#r11').show();
+            }
+        });
+</script>
+</head>
+<body>
+
+    <div class="cleft">
+        <div class="x_leftuser">
+            <span>user:<span th:text="${session.currentUser}"></span></span>
+        </div>
+        <ul class="cmenu">
+            <li id="r1">
+                <a href="javascript:void (0);">
+                    <i class="icon-table"></i>类别管理
+                </a>
+                <ul class="submenu">
+                    <li><a href="/goodsType/list">分类管理</a></li>
+                    <li><a href="/goodsType/list">导航管理</a></li>
+                </ul>
+            </li>
+            <li id="r2">
+                <a href="javascript:void(0)">
+                    <i class="icon-table"></i>商城管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/task/goods/list" class="xNav2_0">商品管理</a></li>
+                    <li><a href="/task/excel/list" class="xNav2_2">分类导出</a></li>
+                </ul>
+            </li>
+            <li id="r3">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>客户管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/task/account/list?ptype=user">用户管理</a></li>
+                    <li><a href="/task/order/list?ptype=user">订单管理</a></li>
+                </ul>
+            </li>
+            <li id="r8">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>资讯管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/newsback/newstype/list" class="xNav8_0">新闻栏目</a></li>
+                    <li><a href="/task/newsmanage/list" class="xNav8_1">新闻管理</a></li>
+                    <li><a href="/task/friendlink/list" class="xNav8_2">项目友链</a></li>
+                    <li><a href="/newsback/newscatpicture/list" class="xNav8_3">项目图片</a></li>
+                    <li><a href="/task/advert/list?search_EQ_catId=47" class="xNav8_4">广告位管理</a></li>
+                    <li><a href="/task/statistics/user" class="xNav8_4">新闻统计</a></li>
+                </ul>
+            </li>
+            <li id="r4">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>内容维护<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/task/message/list?ptype=content">评价管理</a></li>
+                </ul>
+            </li>
+            <li id="r5">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>财务管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/task/finance/order/list">付款订单</a></li>
+                    <li><a href="/task/invoice/list">发票管理</a></li>
+                </ul>
+            </li>
+            <li id="r6">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>后台账号<em></em>
+                </a>
+            </li>
+            <li id="r7">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>配置管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/task/modeindex/list">首页模板</a></li>
+                    <li><a href="/task/setting/toEmailList">邮件配置</a></li>
+                    <li><a href="/task/setting/toSmsList">短信配置</a></li>
+                    <li><a href="/task/setting/toModelList">邮件短信模板</a></li>
+                </ul>
+            </li>
+            <li id="r9">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>售后管理<em></em>
+                </a>
+            </li>
+
+            <li id="r10">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>购物券管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/quan/list?type=djj">代金劵</a></li>
+                    <li><a href="/quan/list?type=dkj">抵扣卷</a></li>
+                </ul>
+            </li>
+
+
+            <li id="r11">
+                <a href="javascript:void(0)">
+                    <i class="icon-user"></i>客户管理<em></em>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/task/account/list?ptype=user">用户管理</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+    <!--折叠-->
+    <div class="x_bgleftSlide bg0"></div>
+
+    <script type="application/javascript">
+        $(function(){
+            $(".submenu > li").click(function () {
+                if ($(this).find(".threemenu").css('display') == "none") {
+                    $(this).find(".threemenu").slideDown();
+                    $(this).siblings().find(".threemenu").slideUp();
+                }
+                else {
+                    $(this).find(".threemenu").slideUp();
+                }
+            });
+            var xleftShow = function(){
+                $(".cleft").animate({left:0});
+                $(".cright,.x_bgleftSlide").animate({left:180});
+                $(".x_bgleftSlide").removeClass("bg1").addClass("bg0");
+            };
+            var xleftHide = function(){
+                $(".cleft").animate({left:-180});
+                $(".cright,.x_bgleftSlide").animate({left:0});
+                $(".x_bgleftSlide").removeClass("bg0").addClass("bg1");
+            };
+            //左侧折叠
+            $(".x_bgleftSlide").bind("click",function(){
+                var bol = $(this).hasClass("bg0");
+                if(bol){
+                    xleftHide();
+                }else{
+                    xleftShow();
+                }
+            });
+        })
+    </script>
+    <style type="text/css">
+        .threemenu {
+            display: none;
+        }
+
+        .threemenu li {
+            background-color: #3d3d3d;
+        }
+
+        .threemenu li:hover {
+            background-color: #212121;
+        }
+
+        .threemenu li a {
+            color: #bdbdbd;
+            padding: 3px 10px 5px 55px;
+            line-height: 25px;
+        }
+    </style>
+</body>
+</html>
+
+

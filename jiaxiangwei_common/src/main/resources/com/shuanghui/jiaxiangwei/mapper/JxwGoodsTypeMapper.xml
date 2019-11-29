@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shuanghui.jiaxiangwei.mapper.JxwGoodsTypeMapper">
+    <resultMap id="resultMap" type="com.shuanghui.jiaxiangwei.dto.JxwGoodsTypeDto">
+        <result column="id" property="id" jdbcType="NUMERIC"></result>
+        <result column="parent_id" property="parentId" jdbcType="NUMERIC"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="goods_type_file" property="goodsTypeFile" jdbcType="VARCHAR"></result>
+        <result column="while_on_index" property="whileOnIndex" jdbcType="NUMERIC"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"></result>
+        <result column="creation_date" property="creationDate" jdbcType="DATE"></result>
+        <result column="last_update_by" property="lastUpdateBy" jdbcType="VARCHAR"></result>
+        <result column="last_date" property="lastDate" jdbcType="DATE"></result>
+        <result column="version" property="version" jdbcType="NUMERIC"></result>
+    </resultMap>
+
+    <!--添加类型 -->
+    <insert id="insert" parameterType="com.shuanghui.jiaxiangwei.dto.JxwGoodsTypeDto">
+        insert into jxw_goods_type_t(parent_id,name,goods_type_file,while_on_index,create_by,creation_date,last_update_by,last_date,version)
+        value(#{parentId},#{name},#{goodsTypeFile},#{whileOnIndex},#{createBy},#{creationDate},#{lastUpdateBy},#{lastDate},1)
+    </insert>
+
+    <update id="update" parameterType="com.shuanghui.jiaxiangwei.dto.JxwGoodsTypeDto">
+        update jxw_goods_type_t
+        set
+        <if test="parentId!=null">
+            parent_id=#{parentId},
+        </if>
+        <if test="name!=null">
+            name=#{name},
+        </if>
+        <if test="goodsTypeFile">
+            goods_type_file=#{goodsTypeFile},
+        </if>
+        <if test="whileOnIndex!=null">
+            while_on_index=#{whileOnIndex},
+        </if>
+        last_update_by=#{lastUpdateBy},
+        last_date=#{lastDate},
+        version=version+1
+       where id=#{id}
+    </update>
+
+    <update id="updateById" parameterType="com.shuanghui.jiaxiangwei.dto.JxwGoodsTypeDto">
+        update jxw_goods_type_t
+        set
+            parent_id=#{parentId},
+            name=#{name},
+            goods_type_file=#{goodsTypeFile},
+            while_on_index=#{whileOnIndex},
+            last_update_by=#{lastUpdateBy},
+            last_date=#{lastDate},
+            version=version+1
+            where id=#{id}
+    </update>
+
+    <sql id="query_sql_base">
+        SELECT
+            id,
+            parent_id,
+            name,
+            goods_type_file,
+            while_on_index,
+            create_by,
+            creation_date,
+            last_update_by,
+            last_date,
+            version
+        FROM  jxw_goods_type_t
+    </sql>
+    <select id="findAll" resultMap="resultMap">
+        <include refid="query_sql_base"/>
+    </select>
+
+    <select id="getGoodsTypeById" resultMap="resultMap">
+        <include refid="query_sql_base"/>
+        WHERE  id=#{id}
+    </select>
+
+    <!-- 删除父节点和父节点下的子节点-->
+    <delete id="deleteGoodsTypeByParentId" parameterType="com.shuanghui.jiaxiangwei.dto.JxwGoodsTypeDto">
+           delete from jxw_goods_type_t where id = #{id} or parent_id=#{id}
+    </delete>
+</mapper>
+
+

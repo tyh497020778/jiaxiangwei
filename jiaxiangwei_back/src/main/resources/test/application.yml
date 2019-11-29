@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jiaxiangwei?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+   #静态资源直接访问
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/templates/
+mybatis:
+  mapper-locations: classpath:com/shuanghui/jiaxiangwei/mapper/*.xml
+  type-aliases-package: com.shuanghui.jiaxiangwei.dto
+server:
+  port: 8082
+
+directoryfolder:
+  goodsTypePath: E:/shuanghui/jiaxiangwei/goodsType
