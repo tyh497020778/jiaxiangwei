@@ -1,5 +1,6 @@
 package com.shuanghui.jiaxiangwei.dto;
 
+import com.shuanghui.jiaxiangwei.shiro.ShiroRealm;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,7 +18,7 @@ public class BaseDto  {
     /**
      * 创建人
      */
-    private Long createBy;
+    private String createBy;
     /**
      * 创建时间
      */
@@ -25,7 +26,7 @@ public class BaseDto  {
     /**
      * 修改人
      */
-    private Long lastUpdateBy;
+    private String lastUpdateBy;
     /**
      * 修改时间
      */
@@ -34,4 +35,13 @@ public class BaseDto  {
      * 版本
      */
     private Integer version;
+
+
+    public void setLoginParam(ShiroRealm.ShiroUser user){
+        this.setCreateBy(user.userName);
+        this.setLastUpdateBy(user.userName);
+        Date date = new Date();
+        this.setCreationDate(date);
+        this.setLastDate(date);
+    }
 }

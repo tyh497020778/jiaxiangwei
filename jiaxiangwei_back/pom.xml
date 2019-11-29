@@ -6,7 +6,7 @@
 
     <groupId>jiaxiangwei_back</groupId>
     <artifactId>jiaxiangwei_back</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>war</packaging>
 
     <parent>
@@ -21,6 +21,39 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <package.environment>dev</package.environment>
+            </properties>
+            <activation>
+                  <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>test</id>
+            <properties>
+                <package.environment>test</package.environment>
+            </properties>
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <package.environment>prod</package.environment>
+            </properties>
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
+        </profile>
+    </profiles>
+
 
     <dependencies>
         <!--shiro的配置 -->
@@ -69,11 +102,10 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>jianxiangwei_common</groupId>
-            <artifactId>jianxiangwei_common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>jiaxiangwei_common</groupId>
+            <artifactId>jiaxiangwei_common</artifactId>
+            <version>1.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -129,11 +161,6 @@
             <version>1.12</version>
         </dependency>
         <dependency>
-            <groupId>jiaxiangwei_common</groupId>
-            <artifactId>jiaxiangwei_common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.collections</groupId>
             <artifactId>google-collections</artifactId>
             <version>1.0</version>
@@ -151,10 +178,31 @@
 
     <build>
         <finalName>${project.build.finalName}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                 <filtering>true</filtering>
+                 <excludes>
+                     <exclude>**/dev/**</exclude>
+                     <exclude>**/test/**</exclude>
+                     <exclude>**/prod/**</exclude>
+                 </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                     <webResources>
+                         <resource>
+                             <directory>src/main/resources/${package.environment}</directory>
+                             <targetPath>WEB-INF/classes</targetPath>
+                             <filtering>true</filtering>
+                         </resource>
+                     </webResources>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -170,6 +218,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.shuanghui.jiaxiangwei.dto.JxwServerLogDto;
 import com.shuanghui.jiaxiangwei.mapper.JxwServerLogMapper;
 import com.shuanghui.jiaxiangwei.service.IJxwServerLogService;
+import com.shuanghui.jiaxiangwei.service.IMemberService;
+import com.shuanghui.jiaxiangwei.shiro.ShiroRealm;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,6 +25,8 @@ import java.util.List;
 public class ServerLogAspect {
     @Autowired
     private IJxwServerLogService jxwServerLogService;
+    @Autowired
+    private IMemberService memberService;
 
     /**
      这里我们使用注解的形式 当然，我们也可以通过切点表达式直接指定需要拦截的package,需要拦截的class 以及 method 切点表达式:
@@ -40,6 +44,7 @@ public class ServerLogAspect {
     @Around("logPointCut()")
     private void saveLog(ProceedingJoinPoint joinPoint) throws Throwable{
         JxwServerLogDto serverLog = new JxwServerLogDto();
+        ShiroRealm.ShiroUser user = memberService.getCurrentUser();
         // 请求的参数
         Object[] args = joinPoint.getArgs();
         try {
@@ -57,8 +62,8 @@ public class ServerLogAspect {
         Date date = new Date();
         serverLog.setCreationDate(date);
         serverLog.setLastDate(date);
-        serverLog.setCreateBy(-1L);
-        serverLog.setLastUpdateBy(-1L);
+        serverLog.setCreateBy(user.userName);
+        serverLog.setLastUpdateBy(user.userName);
         // 请求的 类名、方法名
         String className = joinPoint.getTarget().getClass().getName();
         String methodName = signature.getName();
@@ -67,3 +72,4 @@ public class ServerLogAspect {
         jxwServerLogService.insert(serverLog);
     }
 }
+ 
