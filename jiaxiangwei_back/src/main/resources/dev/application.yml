@@ -1,4 +1,10 @@
 spring:
+  thymeleaf:
+   prefix: classpath:/templates/
+   cache: false
+  #引入的外部文件，前缀是 application
+  profiles:
+    include: directory
   datasource:
     url: jdbc:mysql://localhost:3306/jiaxiangwei?useUnicode=true&characterEncoding=utf8
     username: root
@@ -10,6 +16,3 @@ spring:
 mybatis:
   mapper-locations: classpath:com/shuanghui/jiaxiangwei/mapper/*.xml
   type-aliases-package: com.shuanghui.jiaxiangwei.dto
-
-directoryfolder:
-  goodsTypePath: E:/shuanghui/jiaxiangwei/goodsType
