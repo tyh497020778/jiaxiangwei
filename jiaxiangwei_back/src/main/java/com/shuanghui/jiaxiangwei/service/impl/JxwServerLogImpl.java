@@ -22,8 +22,4 @@ public class JxwServerLogImpl implements IJxwServerLogService {
         return jxwServerLogMapper.insert(jxwServerLog);
     }
 
-    @Override
-    public Integer test(JxwServerLogDto jxwServerLog) {
-        return null;
-    }
 }
