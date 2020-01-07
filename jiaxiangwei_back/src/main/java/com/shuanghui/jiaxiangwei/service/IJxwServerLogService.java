@@ -16,4 +16,6 @@ public interface IJxwServerLogService {
      */
     public  Integer insert(JxwServerLogDto jxwServerLog);
 
+    public  Integer test(JxwServerLogDto jxwServerLog);
+
 }
