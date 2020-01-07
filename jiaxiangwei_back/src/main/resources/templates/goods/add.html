@@ -1,0 +1,303 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Administrator
+  Date: 2015/4/9
+  Time: 11:27
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>${titlename}</title>
+    <link href="${pageContext.request.contextPath}/static/styles/bg.css" type="text/css" rel="stylesheet" />
+    <link href="${pageContext.request.contextPath}/static/jquery-validation/1.11.1/validate.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/bg.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/common.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.ztree.all-3.5.min.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/styles/zTreeStyle.css" type="text/css">
+    <script src="${pageContext.request.contextPath}/static/jquery-validation/1.11.1/jquery.validate.min.js" type="text/javascript"></script>
+    <script language="JavaScript">
+        function setTree(){
+            $.ajax({
+                async : false,			//这个是关闭多线程,因为post方法没有等待取回数据就执行了前台,所以总是不显示
+                cache : true,
+                type : 'POST',
+                dataType : "json",
+                url : "${pageContext.request.contextPath}/task/goodstype/tree",
+                success : function(html) {
+                    treeNodes = html; //把后台封装好的简单Json格式赋给treeNodes
+                }
+            });
+        }
+        //设置
+        var treeNodes;
+        var setting = {							//设置
+            data : {
+                simpleData : {
+                    enable: true,				//允许设置数据修改格式
+                    idKey: "id",				//treeNodes数据的主键列名是id
+                    pIdKey: "parentId",				//设置treeNodes的父id的列明为pId
+                    rootPId: 0				//默认的顶级id的值是0
+                }
+            },
+            check:{								//这个属性来控制是多选还是单选,单选貌似只能支持级联选中
+                enable: false,
+                chkStyle: "checkbox",			//多选
+                chkboxType: { "Y": "s", "N": "s" }	//y表示选中的结果,n表示取消的结果,后面如果跟p表示只影响自己,s表示影响子节点和自己
+            },
+            callback:{
+                //treeId,可以获取数据的内容,treeNode不知道是什么啊
+                beforeClick:function(event, treeId, treeNode){
+                    //科目id
+                    var id=treeId['id'];
+                    if(treeId['level']<2){
+                        // alert("只能选择二级菜单以下的二级目录!");
+                        // return false;
+                    }
+                    $("#treeId").val(id);
+                }
+            }
+        };
+
+        $(function(){
+            //付款类型
+            $('#payType').bind('change',function(){
+                var  paytype = $('#payType').val();
+                if(paytype==1){
+                     $('#deliveryPay_tr').show();
+                }else {
+                    $('#deliveryPay_tr').hide();
+                }
+            });
+
+
+            $('select[name=isSale]').bind('change',function(){
+                  if($(this).val()==2){
+                      $("tr[name=yuding_price]").show();
+                  }else {
+                      $("tr[name=yuding_price]").hide();
+                  }
+            })
+
+             //货到付款金额
+            jQuery.validator.addMethod("deliveryPay", function (value, element) {
+                 if($('#payType').val()==1){
+                        if($('#deliveryPay').val().length<=0  || isNaN($('#deliveryPay').val())){
+                             return false;
+                        }
+                 }
+                return true;
+            }, "请输入正确价格");
+
+
+            //货到付款金额
+            jQuery.validator.addMethod("yudingPay", function (value, element) {
+                if($('select[name=isSale]').val()==2){
+                    var yudingPay = $('#yudingPay').val();
+                    var yudingRepresent = $('#yudingRepresent').val();
+                    if(yudingPay.length<=0 || yudingRepresent.length<=0){
+                          return false;
+                    } else if(isNaN(yudingPay) || isNaN(yudingRepresent)){
+                         return false;
+                    }
+                }
+                return true;
+            }, "请输入正确价格");
+
+
+            //显示出我的树
+            setTree();
+            //设置
+            $.fn.zTree.init($("#tree"),setting,treeNodes);//id,设置,数据,$.fn.zTree包下
+            var demo1 = $("#form1").validate({
+                //规则
+                rules: {
+                    goodsName:{required: true, minlength:2, maxlength:90,remote:"${pageContext.request.contextPath}/task/goods/checkgoodsname"},
+                    saleNum:{required:true,digits:true},
+                    goodsPrice:{required:true,number:true},
+                    promotePrice:{required:true,number:true},
+                    file:{required:true},
+                    goodsFile:{required:true},
+                    deliveryPay:{required:false,deliveryPay:true},
+                    yudingPay:{required:false,yudingPay:true}
+
+                },
+                //提示信息
+                messages: {
+                    goodsName: { required:"请输入2~20位的商品名称",remote:"商品名已经存在!"},
+                    saleNum:{required:"请填写过关人数!",digits:"只能输入整数!"},
+                    goodsPrice:{required:"请输入价格",number:"价格只能为数字"},
+                    promotePrice:{required:"请输入打折价格",number:"价格只能为数字"},
+                    file:{required:"请上传图片"},
+                    goodsFile:{required:"请上传资料"},
+                    deliveryPay:{required:"",deliveryPay:"请输入正确价格"},
+                    yudingPay:{required:"",yudingPay:"预订金额输入不正确"}
+                }
+
+            });
+
+           // demo1.ignore($('#deliveryPay'));
+
+
+            $("#form1").submit(function(){
+                if($("#treeId").val()==""|| $("#treeId").val()==null || $("#treeId").val()==undefined){
+                    alert("请选择科目");
+                    return false;
+                }
+            });
+        });
+
+
+    </script>
+</head>
+<body>
+<div class="head">
+    <div class="hcontent">
+        <%@ include file="../main/bghead.jsp"%>
+
+    </div>
+</div>
+
+<div class="container">
+    <%@ include file="../main/bgleft.jsp"%>
+    <div class="cright">
+        <div class="ctable">
+            <p class="cttit">当前位置：${titlename}</p>
+            <div class="cbox cboxDetail">
+                <div class="newleft">
+                    <ul id="tree" class="ztree" ></ul>
+                </div>
+                <div class="newright">
+                <form id="form1" class="addform" method="post" action="${pageContext.request.contextPath}/task/goods/insert" enctype="multipart/form-data">
+                        <input type="hidden"  name="treeId" id="treeId"  />
+                    <table class="tableDetail">
+                        <tr>
+                            <th>商品状态：</th>
+                            <td><select class="addselect" name="isSale" tabindex="1">
+
+                                <option value="1">出售</option>
+                                <option value="2">预售</option>
+                                <option value="3">爆款</option>
+                                <option value="0">售罄</option>
+                                <option value="4">促销</option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <th>商品名称：</th>
+                            <td><input class="ceninput" type="text" id="goodsName"	name="goodsName"></td>
+                        </tr>
+                        <tr>
+                            <th>对应检索：</th>
+                            <td><input class="ceninput" type="text" name="prof" /></td>
+                        </tr>
+                        <tr>
+                            <th>过关学员：</th>
+                            <td><input class="ceninput" type="text" id="saleNum" name="saleNum" /></td>
+                        </tr>
+                        <tr>
+                            <th>商品原价：</th>
+                            <td><input class="ceninput" type="text"	name="goodsPrice" id="goodsPrice" /></td>
+                        </tr>
+                        <tr>
+                            <th>促销价格：</th>
+                            <td><input class="ceninput" type="text"	name="promotePrice" id="promotePrice" /></td>
+                        </tr>
+                        <tr>
+                            <th>关键字：</th>
+                            <td><input class="ceninput" type="text"	name="keywords" /></td>
+                        </tr>
+                        <tr>
+                            <th>商品图片：</th>
+                            <td><input class="ceninput" type="file" name="file" id="goodsImg" /></td>
+                        </tr>
+                        <tr>
+                            <th>上传商品：</th>
+                            <td><input class="ceninput" type="file" name="file" id="goodsFile" /></td>
+                        </tr>
+                        <tr>
+                            <th>商品描述：</th>
+                            <td><textarea class="xArea" name="goodsDesc"></textarea></td>
+                        </tr>
+                        <tr>
+                            <th>排序：</th>
+                            <td><input class="ceninput" type="text"	name="sort" id="sort" /> (越大越靠前)</td>
+                        </tr>
+
+                        <tr>
+                            <th>支付类型：</th>
+                            <td>
+                                <select  class="addselect" name="payType" tabindex="1" id="payType">
+                                  <option value="0" selected>在线支付</option>
+                                  <option value="1">货到付款</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr id="deliveryPay_tr" style="display: none;">
+                            <th>货到付款金额：</th>
+                            <td><input class="ceninput" type="text"	name="deliveryPay" id="deliveryPay" value="0"/></td>
+                        </tr>
+
+                        <tr  name="yuding_price" style="display: none">
+                            <th>预付定金：</th>
+                            <td><input class="ceninput" type="text"	name="yudingPay" id="yudingPay" value="0"/></td>
+                        </tr>
+                        <tr  name="yuding_price" style="display: none">
+                            <th>预付抵价格：</th>
+                            <td><input class="ceninput" type="text"	name="yudingRepresent" id="yudingRepresent" value="0"/>(商品总价格-预付抵价格=付款金额)</td>
+                        </tr>
+
+                        <tr>
+                            <th>&nbsp;</th>
+                            <td><button class="btnblue btngreen" type="submit">
+                                提交
+                            </button>
+                                <button class="btncancel btngreen" type="button" id="cancel">取消</button></td>
+                        </tr>
+                    </table>
+
+                    <br/>
+                </form>
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer"></div>
+</body>
+</html>
+<script language="javascript">
+    $(function(){
+        $('#cancel').click(function(){
+            window.history.back();
+        })
+    });
+    function getCategory(){
+        $("#category").empty();
+        $.get("${pageContext.request.contextPath}/task/goods/getClassBySeries",{parentId:$("#series").val()},function(data){
+            $("#category").append("<option value='' >请选择</option>");
+            for(var a in data){
+                var content="<option value="+data[a]['id']+">"+data[a]['name']+"</option>";
+                $("#category").append(content);
+            }
+        })
+    }
+
+    function getProduct(){
+        $("#product").empty();
+        $.get("${pageContext.request.contextPath}/task/goods/getClassBySeries",{parentId:$("#category").val()},function(data){
+            $("#product").append("<option value='' >请选择</option>");
+            for(var a in data){
+                var content="<option value="+data[a]['id']+">"+data[a]['name']+"</option>";
+                $("#product").append(content);
+            }
+        })
+    }
+</script>

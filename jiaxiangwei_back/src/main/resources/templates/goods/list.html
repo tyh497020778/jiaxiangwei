@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>商品管理</title>
+    <link href="/styles/bg.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/zTreeStyle.css" type="text/css"/>
+    <script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.ztree.all-3.5.min.js"></script>
+    <script type="text/javascript" src="/js/bg.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript"  src="/js/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript"  src="/js/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/easyui/themes/icon.css"/>
+    <link type="text/css" rel="stylesheet" href="/js/easyui/themes/default/easyui.css"/>
+    <script type="text/javascript" src="/js/doT.min.js"></script>
+    <script language="JavaScript">
+        var zTreeObj;
+        var setting = {							//设置
+            data : {
+                simpleData : {
+                    enable: true,				//允许设置数据编辑格式
+                    idKey: "id",				//treeNodes数据的主键列名是id
+                    pIdKey: "parentId",				//设置treeNodes的父id的列明为pId
+                    rootPId: 0				//默认的顶级id的值是0
+                }
+            },
+            check:{								//这个属性来控制是多选还是单选,单选貌似只能支持级联选中
+                enable: false,
+                chkStyle: "checkbox",			//多选
+                chkboxType: { "Y": "s", "N": "s" }	//y表示选中的结果,n表示取消的结果,后面如果跟p表示只影响自己,s表示影响子节点和自己
+            },
+            callback:{
+                //treeId,可以获取数据的内容,treeNode不知道是什么啊
+                beforeClick:function(event, treeId, treeNode){
+                    if(!treeId.isParent){
+                        location.href = location.pathname+"?category="+treeId.id
+                    }
+                }
+            }
+        };
+
+        function setTree(){
+            $.ajax({
+                async : false,			//这个是关闭多线程,因为post方法没有等待取回数据就执行了前台,所以总是不显示
+                cache : true,
+                type : 'POST',
+                dataType : "json",
+                url : "/task/goodstype/tree",
+                success : function(html) {
+                    zTreeObj = $.fn.zTree.init($("#tree"),setting,html);//id,设置,数据,$.fn.zTree包下
+                    tmp_nodeId = $("#category").val()
+                    node = zTreeObj.getNodeByParam('id',tmp_nodeId)
+                    if(node != null){
+                        zTreeObj.selectNode(node);
+                    }
+                    console.log(tmp_nodeId)
+                }
+            });
+            //设置
+        }
+
+        $(function(){
+           //  setTree();
+           // var path=$("#path").val();
+           // var deleteUrl=path+"/task/goods/delete/";
+           // $("#deleteall").click(function(){
+           //     deletes(deleteUrl);
+           //  });
+           //
+           //  $("a[name='add']").click(function(){
+           //        var _tr_text = doT.template($('#goodsReadingTable').text());
+           //        var list = new Array();
+           //        var _tr_length = $('.tableDetail_tbody').find('tr').length;
+           //        $('.tableDetail_tbody').find('tr').eq(-_tr_length).after(_tr_text(list));
+           //  });
+           //
+           //  $('.tableDetail_tbody').delegate("a[name='fj_delete']","click",function(){
+           //       var _this = $(this).parent().parent();
+           //       _this.find("input[name='status']").val('1');
+           //       _this.hide();
+           //  });
+
+       });
+        function edit(goodsId){
+            $.post('/goodsReading/ajaxfindall',{search_EQ_productId:goodsId},function(data){
+                var  goodsReadingTable = doT.template($('#goodsReadingTable').text());
+                $('.tableDetail_tbody').html(goodsReadingTable(data));
+            });
+            $("input[name='productId']").val(goodsId);
+            xPopup('goodsReadingPopup');
+        }
+
+        function selectfile(obj){
+            var _this = $(obj);
+            var file = _this.val();
+            var strFileName=file.replace(/^.+?\\([^\\]+?)(\.[^\.\\]*?)?$/gi,"$1");
+            var FileExt=file.replace(/.+\./,"");
+            _this.parent().parent().find("input[name='goodsReadingName']").val(strFileName);
+        }
+    </script>
+</head>
+<body>
+<input type="hidden" id="path"  />
+<input type="hidden" id="category"/>
+<div class="head">
+    <div class="hcontent" th:include="main/bghead"></div>
+</div>
+<div class="container">
+    <div th:include="main/bgleft"></div>
+    <div class="cright" style="width:85%">
+        <!-- START SEARCH-->
+        <div class="caption"><span class="captionArrow"></span>
+            <div class="capbox">
+                <form action="/task/goods/list" method="post">
+                    <ul class="x_searchBox clear">
+                        <li><label for="goodsName">商品名称：</label><input type="text" id="goodsName" name="search_LIKE_goodsName"  /></li>
+                        <li><button class="btngreen" type="submit">SEARCH</button></li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+        <!-- START　TABLE -->
+        <div class="ctable">
+            <p class="cttit">
+                当前位置：<label th:text="${titlename}"/>
+            </p>
+
+            <div class="cbox">
+                <div class="newleft">
+                    <ul id="tree" class="ztree"></ul>
+                </div>
+                <div class="newright">
+                    <div class="catspan">
+				        <a class="btngreen" href="/task/goods/add"><i class="icon-plus"></i>添加商品</a>
+                        <a class="btngreen" href="#"><i class="icon-plus icon-plus-del" id="deleteall"></i>删除</a>
+                        <a class="btngreen" href="javascript:exportQ();">Export</a>
+                        <a class="btngreen" href="#" id="xSearchbtn"><i class="icon-plus icon-plus-search"></i>搜索</a>
+			        </div>
+
+                    <table width="100%" class="table" border="0" cellspacing="0" cellpadding="0" id="questionTab">
+                        <tbody>
+                        <tr class="ccolor">
+                            <th width="5%"><input type="checkBox" onclick="CheckAll('questionTab')" id="check"/></th>
+                            <th width="20%">商品名称</th>
+                            <th width="10%">商品状态</th>
+                            <th width="20%">关键词</th>
+                            <th width="10%">所属类别</th>
+                            <th width="5%">所属系列</th>
+                            <th width="15%">创建时间</th>
+                            <th width="5%">附件</th>
+                            <th width="10%">操作</th>
+                        </tr>
+                        <!--<c:forEach items="${entitys.content}" var="member">-->
+                        <!--<tr>-->
+                            <!--<td><input type="checkBox" name="key" value="${member.goodsId}"></td>-->
+                            <!--<td>${member.goodsName}</td>-->
+                            <!--<td>-->
+                                <!--<c:if test="${member.isSale==0 }">售完</c:if>-->
+                                <!--<c:if test="${member.isSale==1 }">出售</c:if>-->
+                                <!--<c:if test="${member.isSale==2 }">预售</c:if>-->
+                            <!--</td>-->
+                            <!--<td>${member.keywords}</td>-->
+                            <!--<td><c:forEach  items="${classes}" var="class1"><c:if test="${class1.id==member.categoryId}"><a href="/task/class/list?search_EQ_id=${class1.id}">${class1.name}</a></c:if></c:forEach></td>-->
+                            <!--<td>-->
+
+                                <!--<c:if test="${member.seriesId==1}">其他</c:if>-->
+                                <!--<c:if test="${member.seriesId==2}">建筑建工类</c:if>-->
+                                <!--<c:if test="${member.seriesId==3}">医药卫生类</c:if>-->
+                                <!--<c:if test="${member.seriesId==4}">学历类</c:if>-->
+                                <!--<c:if test="${member.seriesId==5}">财会金融</c:if>-->
+                                <!--<c:if test="${member.seriesId==6}">测试专用</c:if>-->
+                            <!--</td>-->
+
+                            <!--<td><script type="text/javascript">document.write(new Date(${member.createTime}).pattern("yyyy-MM-dd HH:mm:ss"));</script></td>-->
+                            <!--<c:if test="${fn:length(member.goodsFile)>0}" var="isTrue">-->
+                                <!--<td>-->
+                                    <!--${member.goodsFile}-->
+                                <!--</td>-->
+                            <!--</c:if>-->
+                            <!--<c:if test="${!isTrue}">-->
+                                <!--<td style="color: red;">-->
+                                    <!--无-->
+                                <!--</td>-->
+                            <!--</c:if>-->
+                            <!--<td><a href=""  onclick="window.open('/task/goods/detail/${member.goodsId}')"; >查看</a>|-->
+                                <!--<a href="/task/goods/update/${member.goodsId}" class="edit">编辑</a>|-->
+                                <!--<a class="edit" href="/task/goods/delete/${member.goodsId}">删除</a>|-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                            <!--</c:forEach>-->
+                        </tbody>
+                    </table>
+                    <div class="x_pagebox">
+                        <!--<div class="page"><tags:pagination page="${entitys}" paginationSize="10"/></div>-->
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+        <!-- END TABLE -->
+    </div>
+</div>
+<div class="footer">
+</div>
+</body>
+</html>
