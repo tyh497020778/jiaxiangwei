@@ -30,18 +30,6 @@ public class GoodsController {
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         return "goods/list";
     }
 
